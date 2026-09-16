@@ -268,6 +268,16 @@ svg {
   gap: 14px;
 }
 
+/* Ana sayfada kademe kartları gösterilmez; adalar ve etiketleri seçimi sunar.
+   Kartlar klavye ve ekran okuyucu için yerinde kalır, Tab ile odaklanınca belirir. */
+.rihtim--kademe:not(:focus-within) {
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .kart {
   position: relative;
   display: flex;
@@ -536,14 +546,6 @@ body:not([data-sayfa='ana-sayfa']) .ipucu {
   transition: opacity 0.3s ease;
 }
 
-.etiket-nokta {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--etiket-renk);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--etiket-renk) 25%, transparent);
-}
-
 .etiket-metin {
   display: grid;
   gap: 1px;
@@ -551,76 +553,11 @@ body:not([data-sayfa='ana-sayfa']) .ipucu {
   line-height: 1.25;
 }
 
-.etiket-satir {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.etiket-ozet {
-  display: block;
-  max-width: 0;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  font-size: 0.78rem;
-  line-height: 1.35;
-  white-space: normal;
-  color: var(--murekkep-2);
-  transition: max-width 0.35s ease, max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease;
-}
-
-.etiket--aktif .etiket-ozet {
-  width: 250px;
-  max-width: 250px;
-  max-height: 60px;
-  margin-top: 3px;
-  opacity: 1;
-}
-
-/* Ada etiketleri tabelanın altına, iskele/su tarafına sarkar; binaları örtmez */
-.etiket--kademe .etiket-ic {
-  top: 16px;
-  bottom: auto;
-}
-
-.etiket--kademe .etiket-sap {
-  top: 0;
-  bottom: auto;
-  height: 16px;
-  background: linear-gradient(to top, rgba(251, 247, 238, 0.95), rgba(251, 247, 238, 0));
-}
-
-.etiket--kademe.etiket--aktif .etiket-ic {
-  border-radius: 18px;
-  padding: 10px 14px 10px 12px;
-  transform: translateX(-50%) translateY(3px) scale(1.03);
-}
-
 .etiket-ad {
   font-weight: 800;
   font-size: 0.9rem;
 }
 
-/* Matematik Feneri: fener odasının üstünde, altın vurgulu */
-.etiket--fener .etiket-ic {
-  gap: 7px;
-  padding: 6px 13px 6px 9px;
-  border-color: color-mix(in srgb, var(--etiket-renk) 45%, white);
-}
-
-.etiket-ikon {
-  width: 20px;
-  height: 20px;
-  color: color-mix(in srgb, var(--etiket-renk) 60%, var(--murekkep));
-}
-
-.etiket--fener.etiket--aktif .etiket-ic {
-  background: var(--fildisi);
-  box-shadow: var(--golge), 0 0 0 2px var(--etiket-renk);
-}
-
-.etiket-aralik,
 .etiket-yapi {
   font-size: 0.78rem;
   color: var(--murekkep-2);
@@ -1120,19 +1057,6 @@ body.sahnesiz {
     font-size: 0.74rem;
     text-align: center;
   }
-
-  .etiket-aralik {
-    display: none;
-  }
-
-  /* Dar ekranda fener etiketi yalnız simge; ada etiketlerini örtmesin */
-  .etiket--fener .etiket-ad {
-    display: none;
-  }
-
-  .etiket--fener .etiket-ic {
-    padding: 6px;
-  }
 }
 
 /* Alçak ekranlar: yatay telefon, %400 yakınlaştırma */
@@ -1219,11 +1143,6 @@ body.sahnesiz {
   }
 
   .sinif-yapi {
-    display: none;
-  }
-
-  /* Alçak ekranda ada etiketleri rıhtıma biner; kartlar aynı seçimi sunar */
-  .etiket--kademe {
     display: none;
   }
 

@@ -42,7 +42,6 @@ const ikon = {
   geri: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H5m4.5-4.5L5 10l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   sifirla: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   kapat: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
-  fener: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.2 7.5h3.6l1.1 9.5H7.1zM7.6 7.5h4.8M8.4 5.2h3.2v2.3H8.4zM10 3v2.2M6 17h8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.6 6.2l4.6-1.6M12.6 6.4l4.6 1.6M7.4 6.2L2.8 4.6M7.4 6.4l-4.6 1.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".6"/></svg>',
   marka: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#f6efe0"/><path d="M6 20.5c3-1.6 6.5-1.6 10 0s7 1.6 10 0" fill="none" stroke="#2a8f8f" stroke-width="1.8" stroke-linecap="round"/><path d="M9.5 18l4.2-8.2 3.4 5.6 1.9-2.6 3.5 5.2" fill="none" stroke="#1d3a37" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="21.5" cy="9.5" r="1.8" fill="#c99a52"/></svg>',
 };
 
@@ -177,7 +176,8 @@ function bosluklar() {
   const ustBosluk = genis ? (ANA ? 24 : Math.min(ust.bottom, 110) + 8) : ust.bottom + 8;
   return {
     top: ustBosluk,
-    bottom: Math.max(0, h - alt.top) + 10,
+    // Ana sayfada kademe kartları görünmez (yalnız klavye odağında belirir); alt boşluk gerekmez
+    bottom: ANA ? 16 : Math.max(0, h - alt.top) + 10,
     left: 0,
     right: 0,
   };
@@ -327,49 +327,8 @@ function rihtimKur() {
 }
 
 function etiketleriKur() {
-  if (ANA) {
-    for (const k of KADEMELER) {
-      const etiket = el(
-        'div',
-        { class: 'etiket etiket--kademe', style: { '--etiket-renk': k.renk } },
-        el(
-          'button',
-          { class: 'etiket-ic', type: 'button', tabindex: '-1', onclick: () => kademeyeGit(k) },
-          el('span', { class: 'etiket-nokta' }),
-          el(
-            'span',
-            { class: 'etiket-metin' },
-            el('span', { class: 'etiket-satir' }, el('span', { class: 'etiket-ad', text: k.ad }), el('span', { class: 'etiket-aralik', text: k.aralik })),
-            el('span', { class: 'etiket-ozet', text: k.ozet })
-          ),
-          el('span', { class: 'etiket-ok', html: ikon.ok })
-        ),
-        el('span', { class: 'etiket-sap' })
-      );
-      etiket.addEventListener('pointerenter', () => sahne.vurgula(k.id));
-      etiket.addEventListener('pointerleave', () => sahne.vurgula(null));
-      etiketKatmani.append(etiket);
-      sahne.etiketBagla(k.id, etiket);
-    }
-    if (sahne.bul(FENER.id)) {
-      const etiket = el(
-        'div',
-        { class: 'etiket etiket--fener', style: { '--etiket-renk': FENER.renk } },
-        el(
-          'button',
-          { class: 'etiket-ic', type: 'button', tabindex: '-1', onclick: () => fenerSec() },
-          el('span', { class: 'etiket-ikon', html: ikon.fener }),
-          el('span', { class: 'etiket-ad', text: FENER.ad })
-        ),
-        el('span', { class: 'etiket-sap' })
-      );
-      etiket.addEventListener('pointerenter', () => sahne.vurgula(FENER.id));
-      etiket.addEventListener('pointerleave', () => sahne.vurgula(null));
-      etiketKatmani.append(etiket);
-      sahne.etiketBagla(FENER.id, etiket);
-    }
-    return;
-  }
+  // Ana sayfada etiket yok: adaların adları sahnedeki tabelalarda yazılı
+  if (ANA) return;
   for (const g of SINIF_SIRASI[SAYFA]) {
     const etiket = el(
       'div',
