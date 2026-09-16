@@ -602,6 +602,24 @@ body:not([data-sayfa='ana-sayfa']) .ipucu {
   font-size: 0.9rem;
 }
 
+/* Matematik Feneri: fener odasının üstünde, altın vurgulu */
+.etiket--fener .etiket-ic {
+  gap: 7px;
+  padding: 6px 13px 6px 9px;
+  border-color: color-mix(in srgb, var(--etiket-renk) 45%, white);
+}
+
+.etiket-ikon {
+  width: 20px;
+  height: 20px;
+  color: color-mix(in srgb, var(--etiket-renk) 60%, var(--murekkep));
+}
+
+.etiket--fener.etiket--aktif .etiket-ic {
+  background: var(--fildisi);
+  box-shadow: var(--golge), 0 0 0 2px var(--etiket-renk);
+}
+
 .etiket-aralik,
 .etiket-yapi {
   font-size: 0.78rem;
@@ -1105,6 +1123,15 @@ body.sahnesiz {
 
   .etiket-aralik {
     display: none;
+  }
+
+  /* Dar ekranda fener etiketi yalnız simge; ada etiketlerini örtmesin */
+  .etiket--fener .etiket-ad {
+    display: none;
+  }
+
+  .etiket--fener .etiket-ic {
+    padding: 6px;
   }
 }
 

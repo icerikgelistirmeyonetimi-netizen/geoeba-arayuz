@@ -34,6 +34,13 @@ export const KADEMELER = [
   },
 ];
 
+/** Ana sayfadaki deniz feneri: bir kademe değil, takımadanın simge yapısı. */
+export const FENER = {
+  id: 'fener',
+  ad: 'Matematik Feneri',
+  renk: '#c99a52',
+};
+
 /** Sınıf yapılarının adları; Blender'daki ERISIM_* köklerinin temsil ettiği binalar. */
 export const SINIF_YAPILARI = {
   1: 'Sayma Atölyesi',

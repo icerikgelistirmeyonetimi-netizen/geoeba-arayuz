@@ -127,6 +127,70 @@ function gokOrtami(renderer, gunesYonu) {
   return hedef.texture;
 }
 
+/**
+ * Deniz fenerinin dönen ışık huzmesi: lambadan açılan, uca doğru sönen, kenarları yumuşak
+ * iki koni. Eklemeli karışım; gündüz sahnesinde hafif bir ışık demeti olarak görünür.
+ */
+function fenerHuzmesi(lamba) {
+  const boy = 18;
+  const yaricap = 2.4;
+  const geo = new THREE.ConeGeometry(yaricap, boy, 48, 1, true);
+  geo.translate(0, -boy / 2, 0); // tepe lambada
+  geo.rotateZ(Math.PI / 2); // koni +x yönünde açılır
+  const malzeme = new THREE.ShaderMaterial({
+    uniforms: {
+      uRenk: { value: new THREE.Color(1.0, 0.84, 0.55) },
+      uGuc: { value: 0.5 },
+      uBoy: { value: boy },
+    },
+    vertexShader: /* glsl */ `
+      varying vec3 vYerel;
+      varying vec3 vNormal;
+      varying vec3 vGoz;
+      void main() {
+        vYerel = position;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        vGoz = -mv.xyz;
+        vNormal = normalMatrix * normal;
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uRenk;
+      uniform float uGuc;
+      uniform float uBoy;
+      varying vec3 vYerel;
+      varying vec3 vNormal;
+      varying vec3 vGoz;
+      void main() {
+        float t = clamp(vYerel.x / uBoy, 0.0, 1.0);
+        float boyunca = pow(1.0 - t, 1.8) * smoothstep(0.0, 0.04, t);
+        vec3 goz = isOrthographic ? vec3(0.0, 0.0, 1.0) : normalize(vGoz);
+        float kenar = pow(abs(dot(normalize(vNormal), goz)), 1.3);
+        gl_FragColor = vec4(uRenk * boyunca * kenar * uGuc, 1.0);
+      }`,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+  });
+  const donen = new THREE.Group();
+  const egim = new THREE.Group();
+  egim.rotation.z = -0.07; // huzme ufka doğru hafif aşağı bakar
+  // Karşılıklı iki huzme
+  for (const aci of [0, Math.PI]) {
+    const koni = new THREE.Mesh(geo, malzeme);
+    koni.renderOrder = 4;
+    koni.userData.aoDisi = true;
+    const kol = new THREE.Group();
+    kol.rotation.y = aci;
+    kol.add(koni);
+    egim.add(kol);
+  }
+  donen.add(egim);
+  donen.position.set(...lamba);
+  return donen;
+}
+
 function dalgaMalzemesi(doku, okyanus, zaman) {
   const malzeme = new THREE.MeshStandardMaterial({
     map: doku,
@@ -424,8 +488,12 @@ export class AdaSahnesi extends EventTarget {
           yon: giris.heading ? new THREE.Vector2(giris.heading[0], giris.heading[1]).normalize() : null,
           yariBoy: giris.halfLength || 1,
         });
-      } else if (giris.kind === 'stage' || giris.kind === 'grade') {
+      } else if (giris.kind === 'stage' || giris.kind === 'grade' || giris.kind === 'landmark') {
         this.secilebilirEkle(kok, giris);
+        if (giris.lamp) {
+          this.huzme = fenerHuzmesi(giris.lamp);
+          this.sahne.add(this.huzme);
+        }
       }
     }
     this.rotalariKur(kokler, hareketli);
@@ -577,7 +645,8 @@ export class AdaSahnesi extends EventTarget {
   }
 
   secilebilirEkle(kok, giris) {
-    const renkHex = this.renkler[giris.kind === 'stage' ? giris.id : this.sayfa] || '#ffffff';
+    const renkHex = this.renkler[giris.kind === 'grade' ? this.sayfa : giris.id] || '#ffffff';
+    const adaGibi = giris.kind === 'stage' || giris.kind === 'landmark';
     const vurguRenk = new THREE.Color(renkHex);
     const malzemeler = [];
     kok.traverse((o) => {
@@ -597,7 +666,7 @@ export class AdaSahnesi extends EventTarget {
     let halkaY;
     let rx;
     let rz;
-    if (giris.kind === 'stage') {
+    if (adaGibi) {
       rx = Math.max(Math.abs(max.x - merkez.x), Math.abs(min.x - merkez.x));
       rz = Math.max(Math.abs(max.z - merkez.z), Math.abs(min.z - merkez.z));
       vekil = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 32), new THREE.MeshBasicMaterial());
@@ -628,15 +697,16 @@ export class AdaSahnesi extends EventTarget {
       new THREE.MeshBasicMaterial({ color: vurguRenk, transparent: true, opacity: 0, depthWrite: false })
     );
     halka.add(hale, cizgi);
-    halka.position.set(giris.kind === 'stage' ? merkez.x : kutuMerkez.x, halkaY, giris.kind === 'stage' ? merkez.z : kutuMerkez.z);
+    halka.position.set(adaGibi ? merkez.x : kutuMerkez.x, halkaY, adaGibi ? merkez.z : kutuMerkez.z);
     halka.scale.set(rx, 1, rz);
     halka.renderOrder = 3;
     halka.traverse((o) => (o.userData.aoDisi = true));
     this.sahne.add(halka);
 
-    // Ada etiketi tabelanın hemen altından aşağı sarkar; sınıf etiketi binanın üstünde durur
+    // Ada etiketi tabelanın hemen altından aşağı sarkar; sınıf etiketi binanın, fener etiketi fener odasının üstünde durur
+    const capaKaymasi = { stage: -0.45, grade: 1.2, landmark: 0 }[giris.kind] ?? 0;
     const capa = giris.anchor
-      ? new THREE.Vector3(giris.anchor[0], giris.anchor[1] + (giris.kind === 'stage' ? -0.45 : 1.2), giris.anchor[2])
+      ? new THREE.Vector3(giris.anchor[0], giris.anchor[1] + capaKaymasi, giris.anchor[2])
       : new THREE.Vector3(merkez.x, max.y + 0.6, merkez.z);
 
     this.secilebilir.push({
@@ -758,7 +828,7 @@ export class AdaSahnesi extends EventTarget {
       this.imlecGuncelle(e);
       this.kamera.updateMatrixWorld();
       const bulunan = this.sec();
-      if (bulunan) this.yayinla('sec', { giris: bulunan, kaynak: 'sahne' });
+      this.yayinla(bulunan ? 'sec' : 'bosluk', { giris: bulunan, kaynak: 'sahne' });
     };
     el.addEventListener('pointerup', birak);
     el.addEventListener('pointercancel', birak);
@@ -994,7 +1064,8 @@ export class AdaSahnesi extends EventTarget {
     const genislik = Math.max(s.boyut.x, s.boyut.z);
     const w = this.kap.clientWidth || window.innerWidth;
     const gorunen = w * (this.birimPiksel || 0.05) || 30;
-    const zoom = yakinlik ?? THREE.MathUtils.clamp(gorunen / (genislik * (s.tur === 'stage' ? 1.7 : 5.5)), 1.15, 2.4);
+    const carpan = { stage: 1.7, landmark: 2.2 }[s.tur] ?? 5.5;
+    const zoom = yakinlik ?? THREE.MathUtils.clamp(gorunen / (genislik * carpan), 1.15, 2.4);
     const theta = this.tabanKure.theta;
     const phi = this.tabanKure.phi - 0.06;
     // Ekran kaymasını zemin düzleminde karşılık gelen dünya kaymasına çevir
@@ -1075,6 +1146,9 @@ export class AdaSahnesi extends EventTarget {
       s.hale.material.opacity = g * 0.22;
       s.halka.visible = g > 0.005;
     }
+
+    // Fener huzmesi yavaşça döner
+    if (this.huzme) this.huzme.rotation.y = this.zaman.value * 0.45;
 
     // Yüzen tekneler ve şamandıralar; yelkenliler rotalarında ilerler
     const t = this.zaman.value;

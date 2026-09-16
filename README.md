@@ -5,7 +5,7 @@ Three.js tabanlı tam sayfa ada seçimi.
 
 | Sayfa | Blender kaynağı | İçerik |
 | --- | --- | --- |
-| `index.html` | `ana-sayfa.blend` | Üç ada; adaya tıklayınca kademe sayfası açılır |
+| `index.html` | `ana-sayfa.blend` + `../deniz-feneri/deniz-feneri.blend` | Üç ada ve Matematik Feneri; adaya tıklayınca kademe sayfası açılır |
 | `ilkokul.html` | `ilkokul-ada.blend` | 1–4. sınıf binaları |
 | `ortaokul.html` | `ortaokul-ada.blend` | 5–8. sınıf binaları |
 | `lise.html` | `lise-ada.blend` | Hazırlık ve 9–12. sınıf binaları |
@@ -24,6 +24,7 @@ internet yalnız Google Fonts için kullanılır (bağlantı yoksa sistem yazı 
 ## Etkileşim
 
 - **Ana sayfa:** Adanın üzerine gelmek adayı ve alttaki kartı vurgular; tıklamak kamerayı adaya yaklaştırıp kademe sayfasını açar.
+- **Matematik Feneri:** Ana sayfada adaların önünde durur; ışık huzmesi döner. Tıklayınca kamera fenere yaklaşır; boş denize tıklamak, Esc veya sıfırla düğmesi genel görünüme döndürür.
 - **Kademe sayfası:** Bina veya alttaki sınıf düğmesi aynı seçimi yapar. `GRADE_URLS` içinde adres varsa o sayfaya gidilir; yoksa “İçerik bağlantısı henüz eklenmedi.” paneli açılır.
 - Sürükle: çevir · Tekerlek / iki parmak: yakınlaş · Sağ tık: kaydır · Esc: paneli kapat.
 - `?kalite=dusuk` veya `?kalite=yuksek` ile görüntü kalitesi zorlanabilir. Kare hızı düşükse ortam kapatması (AO) ve piksel oranı kendiliğinden düşürülür.
@@ -61,6 +62,8 @@ blender -b ../matematik-kademe-sayfalari/lise-ada.blend --python blender/web_akt
 ```
 
 Betik `.blend` dosyasını kaydetmez. Yaptıkları:
+
+0. Ana sayfada `../deniz-feneri/deniz-feneri.blend` varsa fener ve adacık koleksiyonlarını ekler, `FENER_KONUMU` noktasına taşır ve deniz malzemesine fener için sığlık halkası ekler (`landmark:fener`).
 
 1. Render'da görünen tüm geometriyi değiştiricileri uygulanmış hâliyle alır; eğri/yazı çözünürlüğünü ve çok ince pahları web için azaltır.
 2. Nesneleri tıklanabilir gruplara göre birleştirir: ana sayfada `ADA_*` kökleri (`stage:*`), kademe sayfalarında `ERISIM_*` kökleri (`grade:*`), yelkenli ve şamandıralar (`float:*`), geri kalanı `static`.

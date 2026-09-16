@@ -112,6 +112,28 @@
    ],
    "size": null,
    "angle": 0.10000000149011612
+  },
+  {
+   "name": "Optik • sıcak ışık",
+   "type": "POINT",
+   "energy": 12.0,
+   "color": [
+    1.0,
+    0.7,
+    0.3
+   ],
+   "position": [
+    0.0,
+    9.43,
+    20.72
+   ],
+   "direction": [
+    0.0,
+    -1.0,
+    -0.0
+   ],
+   "size": null,
+   "angle": null
   }
  ],
  "world": {
@@ -349,6 +371,42 @@
     11.9,
     0.0,
     -11.0
+   ]
+  },
+  {
+   "key": "landmark:fener",
+   "node": "landmark|fener",
+   "kind": "landmark",
+   "id": "fener",
+   "bbox": {
+    "min": [
+     -5.58279,
+     -0.27998,
+     16.55703
+    ],
+    "max": [
+     6.13659,
+     11.38,
+     27.463
+    ]
+   },
+   "triangles": 117684,
+   "label": "Matematik Feneri",
+   "short": "Matematik Feneri",
+   "anchor": [
+    0.0,
+    11.98,
+    20.72
+   ],
+   "center": [
+    0.2769,
+    0.0,
+    22.01
+   ],
+   "lamp": [
+    0.0,
+    9.43,
+    20.72
    ]
   },
   {
@@ -971,7 +1029,349 @@
    ],
    "emission_strength": 0.0,
    "kind": "foliage"
+  },
+  "Jeoloji • oyulmuş kireçtaşı.001": {
+   "base": [
+    0.5348,
+    0.4871,
+    0.3534
+   ],
+   "metallic": 0.0,
+   "roughness": 0.83,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Sahil • ince altın kum.001": {
+   "base": [
+    0.5825,
+    0.4679,
+    0.2961
+   ],
+   "metallic": 0.0,
+   "roughness": 0.84,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Çim • zümrüt çayır.001": {
+   "base": [
+    0.1003,
+    0.2244,
+    0.0554
+   ],
+   "metallic": 0.0,
+   "roughness": 0.95,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "foliage"
+  },
+  "Kıyı • deniz kabuğu": {
+   "base": [
+    0.8,
+    0.77,
+    0.63
+   ],
+   "metallic": 0.0,
+   "roughness": 0.5,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Calcaire • sıcak kireçtaşı": {
+   "base": [
+    0.659,
+    0.6112,
+    0.4871
+   ],
+   "metallic": 0.0,
+   "roughness": 0.69,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Yürüyüş yolu • açık terrazzo.001": {
+   "base": [
+    0.6876,
+    0.659,
+    0.5348
+   ],
+   "metallic": 0.0,
+   "roughness": 0.73,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Peyzaj • yaprak 0": {
+   "base": [
+    0.0764,
+    0.2197,
+    0.0621
+   ],
+   "metallic": 0.0,
+   "roughness": 0.74,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Peyzaj • yaprak 1": {
+   "base": [
+    0.2005,
+    0.3247,
+    0.0812
+   ],
+   "metallic": 0.0,
+   "roughness": 0.74,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Peyzaj • yaprak 2": {
+   "base": [
+    0.0382,
+    0.2101,
+    0.1146
+   ],
+   "metallic": 0.0,
+   "roughness": 0.74,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Çiçek • sıcak fildişi": {
+   "base": [
+    0.81,
+    0.69,
+    0.37
+   ],
+   "metallic": 0.0,
+   "roughness": 0.55,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "foliage"
+  },
+  "Metal • gece yeşili.001": {
+   "base": [
+    0.028,
+    0.075,
+    0.073
+   ],
+   "metallic": 0.42,
+   "roughness": 0.32,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Işık • sıcak opal.001": {
+   "base": [
+    0.98,
+    0.78,
+    0.43
+   ],
+   "metallic": 0.0,
+   "roughness": 0.28,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    0.69,
+    0.29
+   ],
+   "emission_strength": 3.0,
+   "kind": "emissive"
+  },
+  "Ahşap • açık meşe": {
+   "base": [
+    0.5444,
+    0.3343,
+    0.1528
+   ],
+   "metallic": 0.0,
+   "roughness": 0.47,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Metal • fırçalanmış şampanya.001": {
+   "base": [
+    0.5062,
+    0.3343,
+    0.1241
+   ],
+   "metallic": 0.78,
+   "roughness": 0.28,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "metal"
+  },
+  "Ahşap • yağlı meşe.001": {
+   "base": [
+    0.3629,
+    0.191,
+    0.0812
+   ],
+   "metallic": 0.0,
+   "roughness": 0.41,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Kabuk • ipeksi kırık beyaz seramik.001": {
+   "base": [
+    0.8549,
+    0.851,
+    0.7736
+   ],
+   "metallic": 0.0,
+   "roughness": 0.29,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Fener • turkuaz sırlı seramik": {
+   "base": [
+    0.0334,
+    0.3534,
+    0.3152
+   ],
+   "metallic": 0.0,
+   "roughness": 0.27,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Cam • su yeşili fener odası": {
+   "base": [
+    0.56,
+    0.85,
+    0.79
+   ],
+   "metallic": 0.02,
+   "roughness": 0.065,
+   "alpha": 1.0,
+   "transmission": 0.97,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "glass"
+  },
+  "Mercek • berrak optik cam": {
+   "base": [
+    0.95,
+    0.94,
+    0.82
+   ],
+   "metallic": 0.0,
+   "roughness": 0.045,
+   "alpha": 1.0,
+   "transmission": 1.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "glass"
   }
  },
- "triangles": 716929
+ "triangles": 834613
 }

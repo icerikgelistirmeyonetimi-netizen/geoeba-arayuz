@@ -4,7 +4,7 @@
  * rıhtımı, 3B etiketler, sınıf paneli ve sayfa geçişlerini kurar.
  */
 import { AdaSahnesi } from './sahne.js';
-import { KADEMELER, SINIF_YAPILARI, SINIF_SIRASI, kademe, sinifAdi } from './sayfalar.js';
+import { KADEMELER, FENER, SINIF_YAPILARI, SINIF_SIRASI, kademe, sinifAdi } from './sayfalar.js';
 
 // HTML'deki yedek uyarı, modül hiç çalışmazsa (file://, import map desteği yok) gösterilir
 window.adalarBasladi = true;
@@ -42,6 +42,7 @@ const ikon = {
   geri: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H5m4.5-4.5L5 10l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   sifirla: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   kapat: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  fener: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.2 7.5h3.6l1.1 9.5H7.1zM7.6 7.5h4.8M8.4 5.2h3.2v2.3H8.4zM10 3v2.2M6 17h8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.6 6.2l4.6-1.6M12.6 6.4l4.6 1.6M7.4 6.2L2.8 4.6M7.4 6.4l-4.6 1.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".6"/></svg>',
   marka: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#f6efe0"/><path d="M6 20.5c3-1.6 6.5-1.6 10 0s7 1.6 10 0" fill="none" stroke="#2a8f8f" stroke-width="1.8" stroke-linecap="round"/><path d="M9.5 18l4.2-8.2 3.4 5.6 1.9-2.6 3.5 5.2" fill="none" stroke="#1d3a37" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="21.5" cy="9.5" r="1.8" fill="#c99a52"/></svg>',
 };
 
@@ -157,12 +158,14 @@ ustAlan.inert = rihtim.inert = kontroller.inert = true;
 // ---------------------------------------------------------------------------
 // Sahne
 // ---------------------------------------------------------------------------
-const renkler = Object.fromEntries(KADEMELER.map((k) => [k.id, k.renk]));
+const renkler = { ...Object.fromEntries(KADEMELER.map((k) => [k.id, k.renk])), [FENER.id]: FENER.renk };
 let sahne = null;
 let hazir = false;
 let gecisSuruyor = false;
 /** Her yeni seçimde artar; bekleyen bir gidiş daha yeni bir seçim yapıldıysa iptal edilir. */
 let secimNo = 0;
+/** Ana sayfada kamera Matematik Feneri'ne yaklaşmışken true. */
+let fenerOdakta = false;
 
 function bosluklar() {
   const w = window.innerWidth;
@@ -247,13 +250,19 @@ function sahneOlaylari() {
   });
   sahne.addEventListener('sec', (e) => {
     const g = e.detail.giris;
-    if (ANA) kademeyeGit(kademe(g.id));
+    if (g.tur === 'landmark') fenerSec();
+    else if (ANA) kademeyeGit(kademe(g.id));
     else sinifSec(g.id, null);
+  });
+  // Fenere yaklaşılmışken boş denize tıklamak genel görünüme döndürür
+  sahne.addEventListener('bosluk', () => {
+    if (fenerOdakta) fenerdenDon();
   });
   sahne.addEventListener('etkilesim', () => kok.classList.add('etkilesildi'));
   sahne.addEventListener('hata', (e) => yukleyiciHata(e.detail.mesaj, true));
   $('.yuvarlak-dugme', kontroller).addEventListener('click', () => {
     secimNo += 1;
+    fenerOdakta = false;
     panelKapat(false);
     secimiTemizle();
     sahne.sifirla();
@@ -342,6 +351,23 @@ function etiketleriKur() {
       etiketKatmani.append(etiket);
       sahne.etiketBagla(k.id, etiket);
     }
+    if (sahne.bul(FENER.id)) {
+      const etiket = el(
+        'div',
+        { class: 'etiket etiket--fener', style: { '--etiket-renk': FENER.renk } },
+        el(
+          'button',
+          { class: 'etiket-ic', type: 'button', tabindex: '-1', onclick: () => fenerSec() },
+          el('span', { class: 'etiket-ikon', html: ikon.fener }),
+          el('span', { class: 'etiket-ad', text: FENER.ad })
+        ),
+        el('span', { class: 'etiket-sap' })
+      );
+      etiket.addEventListener('pointerenter', () => sahne.vurgula(FENER.id));
+      etiket.addEventListener('pointerleave', () => sahne.vurgula(null));
+      etiketKatmani.append(etiket);
+      sahne.etiketBagla(FENER.id, etiket);
+    }
     return;
   }
   for (const g of SINIF_SIRASI[SAYFA]) {
@@ -402,6 +428,27 @@ async function kademeyeGit(k) {
     if (no !== secimNo) return;
   }
   gecisYap(k.href);
+}
+
+/** Matematik Feneri bir sayfa açmaz; kamera fenere yaklaşır, boş denize tıklayınca ya da Esc ile geri döner. */
+function fenerSec() {
+  if (!hazir || gecisSuruyor) return;
+  if (fenerOdakta) {
+    fenerdenDon();
+    return;
+  }
+  secimNo += 1;
+  fenerOdakta = true;
+  sahne.kilitle(FENER.id);
+  sahne.odaklan(FENER.id, { sure: 1200 });
+  canli.textContent = `${FENER.ad}. Genel görünüme dönmek için Escape tuşuna bas.`;
+}
+
+function fenerdenDon() {
+  fenerOdakta = false;
+  secimNo += 1;
+  sahne.kilitle(null);
+  sahne.sifirla();
 }
 
 document.addEventListener('click', (e) => {
@@ -513,7 +560,9 @@ function paneliKapatVeDon() {
 $('.panel-kapat', panel).addEventListener('click', paneliKapatVeDon);
 $('.panel-don', panel).addEventListener('click', paneliKapatVeDon);
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !panel.hidden) paneliKapatVeDon();
+  if (e.key !== 'Escape') return;
+  if (!panel.hidden) paneliKapatVeDon();
+  else if (fenerOdakta) fenerdenDon();
 });
 
 // Geri tuşuyla önbellekten (bfcache) dönüldüğünde geçiş ve seçim durumunu temizle
@@ -521,6 +570,7 @@ window.addEventListener('pageshow', (e) => {
   if (!e.persisted) return;
   gecisSuruyor = false;
   secimNo += 1;
+  fenerOdakta = false;
   perde.classList.remove('perde--acik');
   panelKapat(false);
   secimiTemizle();

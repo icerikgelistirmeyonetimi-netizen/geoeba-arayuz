@@ -11,6 +11,10 @@ sayfa_id: ana-sayfa | ilkokul | ortaokul | lise
   <cikis>/data/<sayfa_id>.json      Kamera, ışık, deniz sınırları ve grup/etiket bilgileri
 
 Kaynak .blend dosyası değiştirilmez; tüm işlemler kaydedilmeyen oturumda yapılır.
+
+Ana sayfada ../deniz-feneri/deniz-feneri.blend varsa "Matematik Feneri" (fener + adacık
+koleksiyonları) aynı oturumda sahneye eklenir, FENER_KONUMU'na taşınır ve denizine sığlık
+halkası eklenir.
 """
 
 import bpy
@@ -70,6 +74,34 @@ def layer_collection_map(lc, acc):
 
 LC = layer_collection_map(view_layer.layer_collection, {})
 
+# ---------------------------------------------------------------------------
+# Matematik Feneri (yalnız ana sayfa)
+# ---------------------------------------------------------------------------
+FENER_BLEND = os.path.normpath(os.path.join(os.path.dirname(bpy.data.filepath), "..", "deniz-feneri", "deniz-feneri.blend"))
+FENER_KOLEKSIYONLARI = ("01 • DENİZ FENERİ", "02 • FENER ADACIĞI")
+FENER_KOKLERI = ("DENIZ_FENERI", "FENER_ADACIGI")
+# Blender koordinatı: İlkokul (-15.7, -5) ile Lise (15.7, -5) adalarının önünde, ortada
+FENER_KONUMU = Vector((0.0, -21.0, 0.0))
+fener = None
+if IS_HOME and os.path.exists(FENER_BLEND):
+    with bpy.data.libraries.load(FENER_BLEND, link=False) as (kaynak, hedef):
+        hedef.collections = [c for c in kaynak.collections if c in FENER_KOLEKSIYONLARI]
+    fener_nesneleri = []
+    for col in hedef.collections:
+        if col is None:
+            continue
+        scene.collection.children.link(col)
+        for o in col.all_objects:
+            fener_nesneleri.append(o)
+            if o.parent is None:
+                o.location += FENER_KONUMU
+    bpy.context.view_layer.update()
+    lamba = next((o for o in fener_nesneleri if o.type == "LIGHT" and o.data.type == "POINT"), None)
+    fener = {
+        "lamba": lamba.matrix_world.translation.copy() if lamba else FENER_KONUMU + Vector((0, 0.28, 9.4)),
+        "nesne_sayisi": len(fener_nesneleri),
+    }
+
 
 def collection_renderable(col):
     while col is not None:
@@ -127,6 +159,11 @@ SEYRELTME = {
     "Ağaç • ince dal": 0.5,
     "Kıyı • aşınmış kaya": 0.5,
     "Palmiye • gövde boğumu": 0.5,
+    # Matematik Feneri adacığı
+    "Bahçe • kıyı çalısı": 0.4,
+    "Kıyı • yuvarlatılmış taş": 0.35,
+    "Bahçe • minik çiçek": 0.35,
+    "Optik • Fresnel cam mercek": 0.5,
 }
 seyreltilen = 0
 for ob in scene.objects:
@@ -290,6 +327,8 @@ def group_for(ob):
     if ob.name.startswith("Şamandıra"):
         m = re.search(r"\.(\d+)$", ob.name)
         return f"float:samandira-{m.group(1) if m else '000'}"
+    if fener is not None and any(a.name in FENER_KOKLERI for a in chain):
+        return "landmark:fener"
     if IS_HOME:
         for a in chain:
             if a.type == "EMPTY" and a.name.startswith("ADA_"):
@@ -425,6 +464,19 @@ if IS_HOME:
                     "anchor": to_three(anchor),
                     "center": to_three(root.matrix_world.translation),
                 })
+    if fener is not None:
+        for e in group_meta:
+            if e["key"] == "landmark:fener":
+                bmin, bmax = e["bbox"]["min"], e["bbox"]["max"]
+                lamba = fener["lamba"]
+                e.update({
+                    "label": "Matematik Feneri",
+                    "short": "Matematik Feneri",
+                    # Etiket fener odasının tepesinde; ışık huzmesi lambadan çıkar
+                    "anchor": [round(lamba.x, 4), round(bmax[1] + 0.6, 4), round(-lamba.y, 4)],
+                    "center": [round((bmin[0] + bmax[0]) / 2, 4), 0.0, round((bmin[2] + bmax[2]) / 2, 4)],
+                    "lamp": to_three(lamba),
+                })
 else:
     for root in grade_roots:
         gid = grade_id(root)
@@ -445,9 +497,58 @@ else:
 # Deniz: kıyıdan derine renk geçişini dokuya pişir
 # ---------------------------------------------------------------------------
 ocean_meta = None
+
+
+def siglik_ekle(mat, cx, cy, rx, ry):
+    """Kıyıdan derine renk ağına yeni bir eliptik sığlık ekler.
+
+    Ada malzemesi her ada için sqrt(((x-cx)/rx)^2 + ((y-cy)/ry)^2) mesafesini MINIMUM
+    düğümleriyle birleştirir; en son MINIMUM çıkışı bir SUBTRACT düğümüne girer. Yeni mesafe
+    o zincirin sonuna eklenir.
+    """
+    agac = mat.node_tree
+    ayir = next((n for n in agac.nodes if n.type == "SEPXYZ"), None)
+    hedef = None
+    for n in agac.nodes:
+        if n.type == "MATH" and n.operation == "SUBTRACT" and n.inputs[0].is_linked:
+            onceki = n.inputs[0].links[0].from_node
+            if onceki.type == "MATH" and onceki.operation == "MINIMUM":
+                hedef = (n, onceki)
+                break
+    if ayir is None or hedef is None:
+        log("uyarı: deniz malzemesinde sığlık zinciri bulunamadı")
+        return False
+    cikarma, son_min = hedef
+
+    def math(op, a, b=None):
+        d = agac.nodes.new("ShaderNodeMath")
+        d.operation = op
+        for i, deger in enumerate((a, b)):
+            if deger is None:
+                continue
+            if isinstance(deger, (int, float)):
+                d.inputs[i].default_value = deger
+            else:
+                agac.links.new(deger, d.inputs[i])
+        return d.outputs[0]
+
+    dx = math("DIVIDE", math("SUBTRACT", ayir.outputs["X"], cx), rx)
+    dy = math("DIVIDE", math("SUBTRACT", ayir.outputs["Y"], cy), ry)
+    mesafe = math("SQRT", math("ADD", math("MULTIPLY", dx, dx), math("MULTIPLY", dy, dy)))
+    yeni_min = math("MINIMUM", son_min.outputs[0], mesafe)
+    agac.links.new(yeni_min, cikarma.inputs[0])
+    return True
+
+
 ocean = next((o for o in scene.objects if o.name.startswith("Okyanus") and o.type == "MESH"), None)
 if ocean is not None:
     src_mat = ocean.material_slots[0].material if ocean.material_slots else None
+    if fener is not None and src_mat is not None:
+        fener_grubu = joined.get("landmark:fener")
+        if fener_grubu is not None:
+            mn, mx = world_bbox_of_mesh(fener_grubu)
+            if siglik_ekle(src_mat, (mn.x + mx.x) / 2, (mn.y + mx.y) / 2, (mx.x - mn.x) * 0.47, (mx.y - mn.y) * 0.47):
+                log("fener sığlığı deniz malzemesine eklendi")
     bake_me = ocean.data.copy()
     bm = bmesh.new()
     bm.from_mesh(bake_me)
