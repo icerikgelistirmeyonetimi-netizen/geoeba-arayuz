@@ -366,20 +366,21 @@ export class AdaSahnesi extends EventTarget {
 
     const kokler = [...gltf.scene.children];
     const icerikKutusu = new THREE.Box3();
+    const hareketli = (grup) => grup.startsWith('float:') || grup.startsWith('iz:');
     for (const kok of kokler) {
       const grup = kok.userData.group || '';
       kok.traverse((o) => {
         if (!o.isMesh) return;
         o.material = uyarla(o.material);
         const cam = o.material.userData.kind === 'glass';
-        o.castShadow = !cam && !grup.startsWith('float:');
+        o.castShadow = !cam && !hareketli(grup);
         o.receiveShadow = true;
         if (cam) {
           o.renderOrder = 2;
           o.userData.aoDisi = true;
         }
       });
-      if (!grup.startsWith('float:')) icerikKutusu.expandByObject(kok);
+      if (!hareketli(grup)) icerikKutusu.expandByObject(kok);
     }
     sahne.add(gltf.scene);
     this.icerikKutusu = icerikKutusu;
@@ -389,7 +390,7 @@ export class AdaSahnesi extends EventTarget {
     const noktalar = [];
     const v = new THREE.Vector3();
     for (const kok of kokler) {
-      if ((kok.userData.group || '').startsWith('float:')) continue;
+      if (hareketli(kok.userData.group || '')) continue;
       kok.traverse((o) => {
         if (!o.isMesh) return;
         const konum = o.geometry.attributes.position;
@@ -404,14 +405,131 @@ export class AdaSahnesi extends EventTarget {
 
     // Gruplar: seçilebilir adalar / sınıf binaları ve yüzen tekneler
     const girisler = new Map(veri.groups.map((g) => [g.key, g]));
+    const dugumler = new Map(kokler.map((k) => [k.userData.group, k]));
     for (const kok of kokler) {
       const anahtar = kok.userData.group;
       const giris = girisler.get(anahtar);
       if (!giris) continue;
       if (giris.kind === 'float') {
-        this.yuzenler.push({ nesne: kok, y: kok.position.y, faz: this.yuzenler.length * 1.7 });
+        const iz = giris.wake ? dugumler.get(giris.wake) : null;
+        kok.rotation.order = 'YXZ';
+        this.yuzenler.push({
+          nesne: kok,
+          iz,
+          izY: iz ? iz.position.y : 0,
+          y: kok.position.y,
+          x0: kok.position.x,
+          z0: kok.position.z,
+          faz: this.yuzenler.length * 1.7,
+          yon: giris.heading ? new THREE.Vector2(giris.heading[0], giris.heading[1]).normalize() : null,
+          yariBoy: giris.halfLength || 1,
+        });
       } else if (giris.kind === 'stage' || giris.kind === 'grade') {
         this.secilebilirEkle(kok, giris);
+      }
+    }
+    this.rotalariKur(kokler, hareketli);
+  }
+
+  /**
+   * Yelkenliler için adalara, köprülere ve şamandıralara çarpmayan elips rota.
+   * Rota teknenin Blender'daki konumundan ve yönünden başlar (o noktada rotaya teğettir).
+   */
+  rotalariKur(kokler, hareketli) {
+    const tekneler = this.yuzenler.filter((y) => y.yon);
+    if (!tekneler.length) return;
+
+    // Engel ızgarası: su yüzeyinin üstünde kalan tüm sabit geometri
+    const hucre = 0.5;
+    const kutu = this.icerikKutusu.clone().expandByScalar(12);
+    const nx = Math.ceil((kutu.max.x - kutu.min.x) / hucre);
+    const nz = Math.ceil((kutu.max.z - kutu.min.z) / hucre);
+    const mesafe = new Float32Array(nx * nz).fill(1e6);
+    const isaretle = (x, z) => {
+      const i = Math.floor((x - kutu.min.x) / hucre);
+      const k = Math.floor((z - kutu.min.z) / hucre);
+      if (i >= 0 && k >= 0 && i < nx && k < nz) mesafe[k * nx + i] = 0;
+    };
+    const v = new THREE.Vector3();
+    for (const kok of kokler) {
+      if (hareketli(kok.userData.group || '')) continue;
+      kok.traverse((o) => {
+        if (!o.isMesh) return;
+        const konum = o.geometry.attributes.position;
+        for (let i = 0; i < konum.count; i++) {
+          v.fromBufferAttribute(konum, i).applyMatrix4(o.matrixWorld);
+          // Su seviyesindeki köpük çizgileri engel sayılmaz; kumsal ve üstü sayılır
+          if (v.y > 0.06) isaretle(v.x, v.z);
+        }
+      });
+    }
+    for (const y of this.yuzenler) if (!y.yon) isaretle(y.x0, y.z0);
+
+    // İki geçişli uzaklık dönüşümü (yaklaşık Öklid, hücre biriminde)
+    const D = Math.SQRT2;
+    for (let k = 0; k < nz; k++) {
+      for (let i = 0; i < nx; i++) {
+        const j = k * nx + i;
+        let d = mesafe[j];
+        if (i > 0) d = Math.min(d, mesafe[j - 1] + 1);
+        if (k > 0) {
+          d = Math.min(d, mesafe[j - nx] + 1);
+          if (i > 0) d = Math.min(d, mesafe[j - nx - 1] + D);
+          if (i < nx - 1) d = Math.min(d, mesafe[j - nx + 1] + D);
+        }
+        mesafe[j] = d;
+      }
+    }
+    for (let k = nz - 1; k >= 0; k--) {
+      for (let i = nx - 1; i >= 0; i--) {
+        const j = k * nx + i;
+        let d = mesafe[j];
+        if (i < nx - 1) d = Math.min(d, mesafe[j + 1] + 1);
+        if (k < nz - 1) {
+          d = Math.min(d, mesafe[j + nx] + 1);
+          if (i < nx - 1) d = Math.min(d, mesafe[j + nx + 1] + D);
+          if (i > 0) d = Math.min(d, mesafe[j + nx - 1] + D);
+        }
+        mesafe[j] = d;
+      }
+    }
+    const bosMu = (x, z, yaricap) => {
+      const i = Math.floor((x - kutu.min.x) / hucre);
+      const k = Math.floor((z - kutu.min.z) / hucre);
+      if (i < 0 || k < 0 || i >= nx || k >= nz) return false;
+      return mesafe[k * nx + i] * hucre > yaricap;
+    };
+
+    // Görünür alanın biraz dışına taşmasına izin ver
+    const sinir = this.icerikKutusu.clone().expandByScalar(3);
+    const rotalar = [];
+    for (const t of tekneler) {
+      const f = t.yon;
+      const n = new THREE.Vector2(-f.y, f.x);
+      const yaricap = t.yariBoy + 0.45;
+      let enIyi = null;
+      for (const taraf of [1, -1]) {
+        for (let a = 7; a >= 2.5; a -= 0.5) {
+          for (let b = Math.min(5, a + 1); b >= 1.5; b -= 0.5) {
+            if (enIyi && a * b <= enIyi.a * enIyi.b) continue;
+            const mx = t.x0 + n.x * taraf * b;
+            const mz = t.z0 + n.y * taraf * b;
+            let uygun = true;
+            for (let s = 0; s < 96 && uygun; s++) {
+              const q = (s / 96) * Math.PI * 2;
+              const px = mx + f.x * a * Math.sin(q) - n.x * taraf * b * Math.cos(q);
+              const pz = mz + f.y * a * Math.sin(q) - n.y * taraf * b * Math.cos(q);
+              const cakisma = rotalar.some((r) => Math.hypot(px - r.x, pz - r.z) < r.yaricap);
+              const disarida = px < sinir.min.x || px > sinir.max.x || pz < sinir.min.z || pz > sinir.max.z;
+              if (!bosMu(px, pz, yaricap) || cakisma || disarida) uygun = false;
+            }
+            if (uygun) enIyi = { a, b, taraf, mx, mz };
+          }
+        }
+      }
+      if (enIyi) {
+        t.rota = { ...enIyi, f, n, q: 0 };
+        rotalar.push({ x: enIyi.mx, z: enIyi.mz, yaricap: Math.max(enIyi.a, enIyi.b) + yaricap });
       }
     }
   }
@@ -958,12 +1076,32 @@ export class AdaSahnesi extends EventTarget {
       s.halka.visible = g > 0.005;
     }
 
-    // Yüzen tekneler ve şamandıralar
+    // Yüzen tekneler ve şamandıralar; yelkenliler rotalarında ilerler
     const t = this.zaman.value;
     for (const y of this.yuzenler) {
       y.nesne.position.y = y.y + Math.sin(t * 0.9 + y.faz) * 0.035;
       y.nesne.rotation.z = Math.sin(t * 0.7 + y.faz) * 0.025;
       y.nesne.rotation.x = Math.cos(t * 0.6 + y.faz) * 0.018;
+      const r = y.rota;
+      if (!r || this.azHareket) continue;
+      const { a, b, taraf, f, n } = r;
+      const hiz = 0.55; // metre/saniye
+      const turev = Math.hypot(a * Math.cos(r.q), b * Math.sin(r.q));
+      r.q = (r.q + (hiz * dt) / Math.max(0.3, turev)) % (Math.PI * 2);
+      const px = r.mx + f.x * a * Math.sin(r.q) - n.x * taraf * b * Math.cos(r.q);
+      const pz = r.mz + f.y * a * Math.sin(r.q) - n.y * taraf * b * Math.cos(r.q);
+      const tx = f.x * a * Math.cos(r.q) + n.x * taraf * b * Math.sin(r.q);
+      const tz = f.y * a * Math.cos(r.q) + n.y * taraf * b * Math.sin(r.q);
+      const donus = Math.atan2(tx, tz) - Math.atan2(f.x, f.y);
+      y.nesne.position.x = px;
+      y.nesne.position.z = pz;
+      y.nesne.rotation.y = donus;
+      // Dönüşün içine doğru hafif yatma (eğrilik arttıkça)
+      y.nesne.rotation.z += (taraf * 0.05 * a * b) / Math.max(1, turev * turev);
+      if (y.iz) {
+        y.iz.position.set(px, y.izY, pz);
+        y.iz.rotation.y = donus;
+      }
     }
 
     // Etiketler

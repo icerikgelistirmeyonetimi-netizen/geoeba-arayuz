@@ -281,11 +281,11 @@ def group_for(ob):
     chain = [ob] + anc
     if ob.name.startswith("Okyanus"):
         return None
-    # Yelkenli köpük izi suyun üstünde sabit kalmalı; tekneyle sallanırsa suya gömülüyor
-    if "köpük izi" in ob.name:
-        return "static"
     for a in chain:
         if a.name.startswith("Yelkenli") and a.type == "EMPTY":
+            # Köpük izi tekneyle birlikte ilerler ama sallanmaz (sallanırsa suya gömülüyor)
+            if "köpük izi" in ob.name:
+                return f"iz:{slug(a.name)}"
             return f"float:{slug(a.name)}"
     if ob.name.startswith("Şamandıra"):
         m = re.search(r"\.(\d+)$", ob.name)
@@ -375,7 +375,10 @@ def world_bbox_of_mesh(obj):
 
 
 group_meta = []
-for key, obj in joined.items():
+from mathutils import Matrix
+
+# Yüzen gruplar önce işlenir; köpük izleri tekne pivotunu kullanır
+for key, obj in sorted(joined.items(), key=lambda kv: (kv[0].startswith("iz:"), kv[0])):
     kind, _, gid = key.partition(":")
     mn, mx = world_bbox_of_mesh(obj)
     center = (mn + mx) / 2
@@ -387,10 +390,23 @@ for key, obj in joined.items():
     entry["bbox"] = {"min": [min(bmin[i], bmax[i]) for i in range(3)], "max": [max(bmin[i], bmax[i]) for i in range(3)]}
     if kind == "float":
         pivot = Vector((center.x, center.y, 0.0))
-        from mathutils import Matrix
         obj.data.transform(Matrix.Translation(-pivot))
         obj.location = pivot
         entry["pivot"] = to_three(pivot)
+        entry["halfLength"] = round(max(mx.x - mn.x, mx.y - mn.y) / 2, 4)
+    elif kind == "iz":
+        tekne = next((e for e in group_meta if e["key"] == f"float:{gid}"), None)
+        if tekne is not None:
+            pivot = Vector((tekne["pivot"][0], -tekne["pivot"][2], 0.0))
+            obj.data.transform(Matrix.Translation(-pivot))
+            obj.location = pivot
+            entry["pivot"] = tekne["pivot"]
+            # Köpük izi teknenin arkasında kalır: izden tekneye yön = teknenin ilerleme yönü
+            yon = Vector((pivot.x - center.x, pivot.y - center.y, 0.0))
+            if yon.length > 1e-4:
+                yon.normalize()
+                tekne["heading"] = [round(yon.x, 5), round(-yon.y, 5)]  # Three.js XZ
+                tekne["wake"] = key
     obj["group"] = key
     group_meta.append(entry)
 

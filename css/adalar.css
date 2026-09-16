@@ -1143,9 +1143,14 @@ body.sahnesiz {
     padding: 7px 12px;
   }
 
+  /* Rıhtımla çakışmasın: sıfırla düğmesi üst sağda, alt sayfalarda sekmelerin altında */
   .kontroller {
-    top: auto;
-    bottom: calc(var(--kenar-alt) + 4px);
+    top: max(10px, env(safe-area-inset-top));
+    bottom: auto;
+  }
+
+  body:not([data-sayfa='ana-sayfa']) .kontroller {
+    top: calc(max(10px, env(safe-area-inset-top)) + 54px);
   }
 
   .yuvarlak-dugme {
@@ -1187,6 +1192,11 @@ body.sahnesiz {
   }
 
   .sinif-yapi {
+    display: none;
+  }
+
+  /* Alçak ekranda ada etiketleri rıhtıma biner; kartlar aynı seçimi sunar */
+  .etiket--kademe {
     display: none;
   }
 

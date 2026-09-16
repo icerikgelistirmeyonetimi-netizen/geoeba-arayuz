@@ -470,7 +470,9 @@ async function sinifSec(grade, acan) {
 /** Açık panelin kapattığı alanı hesaba katarak binanın görüneceği ekran kayması. */
 function panelKaymasi() {
   const r = panel.getBoundingClientRect();
-  if (window.innerWidth >= 900) return { x: -(r.width + 24) / 2, y: 0 };
+  // Panel sağ kenardaysa (geniş ya da alçak ekran) bina sola, alttaysa yukarı kaydırılır
+  const yanda = r.left > window.innerWidth * 0.3;
+  if (yanda) return { x: -(r.width + 24) / 2, y: 0 };
   return { x: 0, y: -Math.min(r.height, window.innerHeight * 0.5) / 2 };
 }
 

@@ -165,7 +165,8 @@
     -6.3,
     0.0,
     4.8
-   ]
+   ],
+   "halfLength": 0.15
   },
   {
    "key": "float:samandira-001",
@@ -189,7 +190,8 @@
     6.4,
     0.0,
     5.4
-   ]
+   ],
+   "halfLength": 0.15
   },
   {
    "key": "float:samandira-002",
@@ -213,7 +215,8 @@
     -9.5,
     0.0,
     -5.2
-   ]
+   ],
+   "halfLength": 0.15
   },
   {
    "key": "float:samandira-003",
@@ -237,7 +240,8 @@
     9.6,
     0.0,
     -5.1
-   ]
+   ],
+   "halfLength": 0.15
   },
   {
    "key": "float:yelkenli-grup",
@@ -261,7 +265,13 @@
     -2.1,
     0.0,
     6.6
-   ]
+   ],
+   "halfLength": 0.9446,
+   "heading": [
+    0.81302,
+    -0.58224
+   ],
+   "wake": "iz:yelkenli-grup"
   },
   {
    "key": "float:yelkenli-grup-001",
@@ -281,6 +291,60 @@
     ]
    },
    "triangles": 946,
+   "pivot": [
+    11.9,
+    0.0,
+    -11.0
+   ],
+   "halfLength": 1.0004,
+   "heading": [
+    -0.34356,
+    -0.93913
+   ],
+   "wake": "iz:yelkenli-grup-001"
+  },
+  {
+   "key": "iz:yelkenli-grup",
+   "node": "iz|yelkenli-grup",
+   "kind": "iz",
+   "id": "yelkenli-grup",
+   "bbox": {
+    "min": [
+     -4.67365,
+     0.00588,
+     7.27454
+    ],
+    "max": [
+     -3.21777,
+     0.03012,
+     8.56904
+    ]
+   },
+   "triangles": 48,
+   "pivot": [
+    -2.1,
+    0.0,
+    6.6
+   ]
+  },
+  {
+   "key": "iz:yelkenli-grup-001",
+   "node": "iz|yelkenli-grup-001",
+   "kind": "iz",
+   "id": "yelkenli-grup-001",
+   "bbox": {
+    "min": [
+     12.24628,
+     0.00588,
+     -9.73667
+    ],
+    "max": [
+     13.11364,
+     0.03012,
+     -7.99917
+    ]
+   },
+   "triangles": 48,
    "pivot": [
     11.9,
     0.0,
@@ -391,16 +455,16 @@
    "bbox": {
     "min": [
      -9.4856,
-     0.00588,
-     -9.73666
+     1.69921,
+     -6.0941
     ],
     "max": [
-     13.11364,
+     9.4856,
      3.47349,
-     8.56904
+     1.8941
     ]
    },
-   "triangles": 44840
+   "triangles": 44744
   }
  ],
  "materials": {
