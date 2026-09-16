@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Matematik Takımadaları · GeoEBA</title>
+  <meta name="description" content="İlkokul, ortaokul ve lise adalarından oluşan etkileşimli 3B matematik takımadası.">
+  <meta name="theme-color" content="#1f6c78">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23f6efe0'/%3E%3Cpath d='M6 20.5c3-1.6 6.5-1.6 10 0s7 1.6 10 0' fill='none' stroke='%232a8f8f' stroke-width='1.8' stroke-linecap='round'/%3E%3Cpath d='M9.5 18l4.2-8.2 3.4 5.6 1.9-2.6 3.5 5.2' fill='none' stroke='%231d3a37' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@500;600;700;800&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/adalar.css">
+  <link rel="modulepreload" href="vendor/three/build/three.module.min.js">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/build/three.module.min.js",
+        "three/addons/": "./vendor/three/examples/jsm/"
+      }
+    }
+  </script>
+  <!-- Sınıf ders bağlantıları: window.GRADE_URLS -->
+  <script src="grade-urls.js"></script>
+  <script type="module" src="js/arayuz.js"></script>
+</head>
+<body data-sayfa="ana-sayfa">
+  <div id="sahne" class="sahne" aria-hidden="true" data-aciklama="Üç adalı matematik takımadası: İlkokul, Ortaokul ve Lise adaları. Bir ada seçerek kademe sayfasına geçebilirsin."></div>
+  <div class="yedek" role="alert">
+    <div>
+      <h1 class="yedek-baslik">Matematik Takımadaları</h1>
+      <p class="yedek-mesaj">3B görünüm başlatılamadı. Tarayıcın sahne dosyalarını yükleyemedi.</p>
+      <p class="yedek-baglantilar"><a href="index.html">Tüm adalar</a> <a href="ilkokul.html">İlkokul Adası</a> <a href="ortaokul.html">Ortaokul Adası</a> <a href="lise.html">Lise Adası</a></p>
+    </div>
+  </div>
+  <script>
+    // Modül hiç çalışmazsa (file://, import map desteği olmayan tarayıcı) yedek uyarıyı göster
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        if (window.adalarBasladi) return;
+        if (location.protocol === 'file:') {
+          document.querySelector('.yedek-mesaj').textContent =
+            'Sayfa doğrudan dosyadan açıldı. Klasörü yerel bir sunucuyla açın: python -m http.server 5180 --directory matematik-adalar-3d';
+        }
+        document.body.classList.add('yedek-goster');
+      }, 400);
+    });
+  </script>
+  <noscript>
+    <div class="js-yok">
+      <div>
+        <h1 class="yedek-baslik">Matematik Takımadaları</h1>
+        <p>3B ada görünümü için JavaScript gereklidir.</p>
+        <p class="yedek-baglantilar"><a href="index.html">Tüm adalar</a> <a href="ilkokul.html">İlkokul Adası</a> <a href="ortaokul.html">Ortaokul Adası</a> <a href="lise.html">Lise Adası</a></p>
+      </div>
+    </div>
+  </noscript>
+</body>
+</html>

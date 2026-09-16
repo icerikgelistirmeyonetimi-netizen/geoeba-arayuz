@@ -1,0 +1,711 @@
+{
+ "page": "ilkokul",
+ "source": "ilkokul-ada.blend",
+ "units": "metre, Three.js Y yukarı",
+ "camera": {
+  "type": "ORTHO",
+  "position": [
+   0.2941,
+   49.95588,
+   42.43846
+  ],
+  "target": [
+   0.2941,
+   0.0,
+   -0.62695
+  ],
+  "up": [
+   0.0,
+   0.65294,
+   -0.75741
+  ],
+  "orthoScale": 26.6206,
+  "lens": 50.0,
+  "sensor": 36.0,
+  "renderAspect": 1.33333
+ },
+ "lights": [
+  {
+   "name": "Ana ışık • sıcak geniş pencere",
+   "type": "AREA",
+   "energy": 3500.0,
+   "color": [
+    1.0,
+    0.87,
+    0.7
+   ],
+   "position": [
+    -13.0,
+    24.0,
+    12.0
+   ],
+   "direction": [
+    0.45795,
+    -0.78204,
+    -0.42272
+   ],
+   "size": 12.0,
+   "angle": null
+  },
+  {
+   "name": "Dolgu • su ve gökyüzü",
+   "type": "AREA",
+   "energy": 2400.0,
+   "color": [
+    0.71,
+    0.9,
+    1.0
+   ],
+   "position": [
+    14.0,
+    20.0,
+    -2.0
+   ],
+   "direction": [
+    -0.60741,
+    -0.78963,
+    0.08677
+   ],
+   "size": 14.0,
+   "angle": null
+  },
+  {
+   "name": "Kenar • mimari siluet",
+   "type": "AREA",
+   "energy": 3000.0,
+   "color": [
+    1.0,
+    0.91,
+    0.75
+   ],
+   "position": [
+    0.0,
+    22.0,
+    -15.0
+   ],
+   "direction": [
+    -0.0,
+    -0.80285,
+    0.59618
+   ],
+   "size": 11.0,
+   "angle": null
+  },
+  {
+   "name": "Güneş • yumuşak Akdeniz ışığı",
+   "type": "SUN",
+   "energy": 2.5,
+   "color": [
+    1.0,
+    0.92,
+    0.8
+   ],
+   "position": [
+    0.0,
+    0.0,
+    -0.0
+   ],
+   "direction": [
+    0.51757,
+    -0.79769,
+    -0.30953
+   ],
+   "size": null,
+   "angle": 0.10000000149011612
+  }
+ ],
+ "world": {
+  "color": [
+   0.52,
+   0.72,
+   0.8
+  ],
+  "strength": 0.32
+ },
+ "viewTransform": [
+  "AgX",
+  "AgX - Medium High Contrast",
+  -0.05000000074505806
+ ],
+ "ocean": {
+  "texture": "textures/deniz-ilkokul.png",
+  "minX": -120.0,
+  "maxX": 120.0,
+  "minY": -110.0,
+  "maxY": 110.0,
+  "level": 0.0,
+  "edgeColorSRGB": [
+   0.1294,
+   0.4157,
+   0.4706
+  ],
+  "sourceMaterial": "Deniz • tek ada çevresinde sığlık"
+ },
+ "model": "models/ilkokul.glb",
+ "groups": [
+  {
+   "key": "grade:1",
+   "node": "grade|1",
+   "kind": "grade",
+   "id": "1",
+   "bbox": {
+    "min": [
+     -5.08,
+     1.805,
+     0.49
+    ],
+    "max": [
+     -1.02,
+     6.16091,
+     4.56001
+    ]
+   },
+   "triangles": 8272,
+   "grade": 1,
+   "label": "1. Sınıf",
+   "description": "",
+   "anchor": [
+    -3.05,
+    5.8,
+    4.15
+   ],
+   "center": [
+    -3.05,
+    0.0,
+    2.45
+   ]
+  },
+  {
+   "key": "grade:2",
+   "node": "grade|2",
+   "kind": "grade",
+   "id": "2",
+   "bbox": {
+    "min": [
+     1.05806,
+     1.805,
+     0.476
+    ],
+    "max": [
+     5.025,
+     6.16091,
+     4.56001
+    ]
+   },
+   "triangles": 6228,
+   "grade": 2,
+   "label": "2. Sınıf",
+   "description": "",
+   "anchor": [
+    3.05,
+    5.8,
+    4.15
+   ],
+   "center": [
+    3.05,
+    0.0,
+    2.45
+   ]
+  },
+  {
+   "key": "grade:3",
+   "node": "grade|3",
+   "kind": "grade",
+   "id": "3",
+   "bbox": {
+    "min": [
+     -5.025,
+     1.805,
+     -4.734
+    ],
+    "max": [
+     -1.075,
+     6.16091,
+     -0.58999
+    ]
+   },
+   "triangles": 6130,
+   "grade": 3,
+   "label": "3. Sınıf",
+   "description": "",
+   "anchor": [
+    -3.05,
+    5.8,
+    -1.0
+   ],
+   "center": [
+    -3.05,
+    0.0,
+    -2.7
+   ]
+  },
+  {
+   "key": "grade:4",
+   "node": "grade|4",
+   "kind": "grade",
+   "id": "4",
+   "bbox": {
+    "min": [
+     1.075,
+     1.805,
+     -4.615
+    ],
+    "max": [
+     5.025,
+     6.16091,
+     -0.58999
+    ]
+   },
+   "triangles": 13576,
+   "grade": 4,
+   "label": "4. Sınıf",
+   "description": "",
+   "anchor": [
+    3.05,
+    5.8,
+    -1.0
+   ],
+   "center": [
+    3.05,
+    0.0,
+    -2.7
+   ]
+  },
+  {
+   "key": "static",
+   "node": "static",
+   "kind": "static",
+   "id": "static",
+   "bbox": {
+    "min": [
+     -9.61554,
+     -0.345,
+     -7.97282
+    ],
+    "max": [
+     10.13806,
+     4.21389,
+     10.5
+    ]
+   },
+   "triangles": 175894
+  }
+ ],
+ "materials": {
+  "Jeoloji • ıslak taş": {
+   "base": [
+    0.2292,
+    0.2865,
+    0.2579
+   ],
+   "metallic": 0.0,
+   "roughness": 0.36,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Jeoloji • oyulmuş kireçtaşı": {
+   "base": [
+    0.5348,
+    0.4871,
+    0.3534
+   ],
+   "metallic": 0.0,
+   "roughness": 0.83,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Sahil • ince altın kum": {
+   "base": [
+    0.5825,
+    0.4679,
+    0.2961
+   ],
+   "metallic": 0.0,
+   "roughness": 0.84,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Çim • zümrüt çayır": {
+   "base": [
+    0.1003,
+    0.2244,
+    0.0554
+   ],
+   "metallic": 0.0,
+   "roughness": 0.95,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "foliage"
+  },
+  "Kıyı • deniz kabuğu beyazı": {
+   "base": [
+    0.8,
+    0.77,
+    0.63
+   ],
+   "metallic": 0.0,
+   "roughness": 0.5,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Calcaire • ince gözenekli sıcak kireçtaşı": {
+   "base": [
+    0.659,
+    0.6112,
+    0.4871
+   ],
+   "metallic": 0.0,
+   "roughness": 0.69,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Yürüyüş yolu • açık terrazzo": {
+   "base": [
+    0.6876,
+    0.659,
+    0.5348
+   ],
+   "metallic": 0.0,
+   "roughness": 0.73,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Derz • sıcak gri": {
+   "base": [
+    0.24,
+    0.27,
+    0.22
+   ],
+   "metallic": 0.0,
+   "roughness": 0.85,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Deniz • kıyıdan derine turkuaz": {
+   "base": [
+    0.04,
+    0.3444,
+    0.3547
+   ],
+   "metallic": 0.19,
+   "roughness": 0.24,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "water"
+  },
+  "Metal • fırçalanmış şampanya": {
+   "base": [
+    0.5062,
+    0.3343,
+    0.1241
+   ],
+   "metallic": 0.78,
+   "roughness": 0.28,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "metal"
+  },
+  "İlkokul • mercan": {
+   "base": [
+    0.7163,
+    0.2197,
+    0.1241
+   ],
+   "metallic": 0.0,
+   "roughness": 0.28,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Kabuk • ipeksi kırık beyaz seramik": {
+   "base": [
+    0.8549,
+    0.851,
+    0.7736
+   ],
+   "metallic": 0.0,
+   "roughness": 0.29,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Cam • su yeşili mimari cam": {
+   "base": [
+    0.2,
+    0.52,
+    0.49
+   ],
+   "metallic": 0.06,
+   "roughness": 0.1,
+   "alpha": 1.0,
+   "transmission": 0.67,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "glass"
+  },
+  "Ahşap • yağlı meşe": {
+   "base": [
+    0.3629,
+    0.191,
+    0.0812
+   ],
+   "metallic": 0.0,
+   "roughness": 0.41,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Metal • gece yeşili": {
+   "base": [
+    0.028,
+    0.075,
+    0.073
+   ],
+   "metallic": 0.42,
+   "roughness": 0.32,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Ahşap • açık kesit": {
+   "base": [
+    0.5444,
+    0.3343,
+    0.1528
+   ],
+   "metallic": 0.0,
+   "roughness": 0.47,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "solid"
+  },
+  "Yaprak • 2": {
+   "base": [
+    0.2005,
+    0.3247,
+    0.0812
+   ],
+   "metallic": 0.0,
+   "roughness": 0.75,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "foliage"
+  },
+  "Yaprak • 1": {
+   "base": [
+    0.0764,
+    0.2197,
+    0.0621
+   ],
+   "metallic": 0.0,
+   "roughness": 0.75,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "foliage"
+  },
+  "Yaprak • 0": {
+   "base": [
+    0.0306,
+    0.1241,
+    0.043
+   ],
+   "metallic": 0.0,
+   "roughness": 0.75,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "foliage"
+  },
+  "Yaprak • 3": {
+   "base": [
+    0.0382,
+    0.2101,
+    0.1146
+   ],
+   "metallic": 0.0,
+   "roughness": 0.75,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "foliage"
+  },
+  "Yaprak • 4": {
+   "base": [
+    0.2674,
+    0.3534,
+    0.086
+   ],
+   "metallic": 0.0,
+   "roughness": 0.75,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "foliage"
+  },
+  "Çiçek • 0": {
+   "base": [
+    0.75,
+    0.35,
+    0.19
+   ],
+   "metallic": 0.0,
+   "roughness": 0.48,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "emission_strength": 0.0,
+   "kind": "foliage"
+  },
+  "Işık • sıcak opal": {
+   "base": [
+    1.0,
+    0.74,
+    0.35
+   ],
+   "metallic": 0.0,
+   "roughness": 0.5,
+   "alpha": 1.0,
+   "transmission": 0.0,
+   "emission": [
+    1.0,
+    0.64,
+    0.23
+   ],
+   "emission_strength": 2.5,
+   "kind": "emissive"
+  }
+ },
+ "triangles": 210100
+}
