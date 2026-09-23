@@ -409,19 +409,9 @@ svg {
   box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
 }
 
-.sinif-metin {
-  display: grid;
-  line-height: 1.2;
-}
-
 .sinif-ad {
   font-weight: 800;
   font-size: 0.98rem;
-}
-
-.sinif-yapi {
-  font-size: 0.8rem;
-  color: var(--murekkep-2);
 }
 
 .sinif:hover,
@@ -546,21 +536,9 @@ body:not([data-sayfa='ana-sayfa']) .ipucu {
   transition: opacity 0.3s ease;
 }
 
-.etiket-metin {
-  display: grid;
-  gap: 1px;
-  text-align: left;
-  line-height: 1.25;
-}
-
 .etiket-ad {
   font-weight: 800;
   font-size: 0.9rem;
-}
-
-.etiket-yapi {
-  font-size: 0.78rem;
-  color: var(--murekkep-2);
 }
 
 .etiket-ok {
@@ -677,12 +655,6 @@ body:not([data-sayfa='ana-sayfa']) .ipucu {
   line-height: 1.05;
 }
 
-.panel-yapi {
-  margin: 4px 0 0;
-  color: var(--murekkep-2);
-  font-weight: 600;
-}
-
 .panel-not {
   margin: 0 0 20px;
   padding: 12px 14px;
@@ -791,7 +763,6 @@ body:not([data-sayfa='ana-sayfa']) .ipucu {
   background: var(--fildisi);
   color: var(--murekkep);
 }
-
 
 .perde {
   z-index: 40;
@@ -922,10 +893,6 @@ body.sahnesiz {
   .sinif {
     min-width: 0;
     padding-right: 14px;
-  }
-
-  .sinif-yapi {
-    display: none;
   }
 }
 
@@ -1140,10 +1107,6 @@ body.sahnesiz {
     height: 36px;
     border-radius: 11px;
     font-size: 1.1rem;
-  }
-
-  .sinif-yapi {
-    display: none;
   }
 
   .panel {

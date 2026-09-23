@@ -128,7 +128,7 @@ const panel = el(
   { class: 'panel', role: 'dialog', 'aria-modal': 'false', 'aria-labelledby': 'panel-baslik', hidden: true, tabindex: '-1' },
   el('button', { class: 'panel-kapat', type: 'button', 'aria-label': 'Kapat', html: ikon.kapat }),
   el('p', { class: 'ust-yazi panel-kademe' }),
-  el('div', { class: 'panel-ust' }, el('span', { class: 'rozet panel-rozet' }), el('div', {}, el('h2', { id: 'panel-baslik', class: 'panel-baslik' }), el('p', { class: 'panel-yapi' }))),
+  el('div', { class: 'panel-ust' }, el('span', { class: 'rozet panel-rozet' }), el('h2', { id: 'panel-baslik', class: 'panel-baslik' })),
   el('p', { class: 'panel-not' }),
   el(
     'div',
@@ -317,7 +317,7 @@ function rihtimKur() {
       'button',
       { class: 'sinif', type: 'button', 'data-id': String(g), 'aria-pressed': 'false' },
       el('span', { class: 'rozet', text: g === 'hazirlik' ? 'H' : String(g), 'aria-hidden': 'true' }),
-      el('span', { class: 'sinif-metin' }, el('span', { class: 'sinif-ad', text: sinifAdi(g) }), el('span', { class: 'sinif-yapi', text: SINIF_YAPILARI[g] }))
+      el('span', { class: 'sinif-ad', text: sinifAdi(g) })
     );
     dugme.addEventListener('click', () => sinifSec(g, dugme));
     vurguBagla(dugme, g);
@@ -336,12 +336,7 @@ function etiketleriKur() {
       el(
         'button',
         { class: 'etiket-ic', type: 'button', tabindex: '-1', onclick: () => sinifSec(g, null) },
-        el(
-          'span',
-          { class: 'etiket-metin' },
-          el('span', { class: 'etiket-ad', text: sinifAdi(g) }),
-          el('span', { class: 'etiket-yapi', text: SINIF_YAPILARI[g] })
-        ),
+        el('span', { class: 'etiket-ad', text: sinifAdi(g) }),
         el('span', { class: 'etiket-ok', html: ikon.ok })
       ),
       el('span', { class: 'etiket-sap' })
@@ -488,7 +483,6 @@ function panelAc(grade, acan) {
   $('.panel-kademe', panel).textContent = KADEME.baslik;
   $('.panel-rozet', panel).textContent = grade === 'hazirlik' ? 'H' : String(grade);
   $('.panel-baslik', panel).textContent = sinifAdi(grade);
-  $('.panel-yapi', panel).textContent = SINIF_YAPILARI[grade];
   $('.panel-not', panel).textContent = 'İçerik bağlantısı henüz eklenmedi.';
   panel.hidden = false;
   kok.classList.add('panel-acik');
